@@ -1,0 +1,14 @@
+<ul>
+  @for (i of listaInvestimento; track i.id) {
+  <li>
+    <item-app
+      [investimento]="i"
+      [alreadyUpdating]="isUpdating()"
+      (startUpdate)="startUpdate()"
+      (cancelUpdate)="cancelUpdateEvent()"
+      (handleUpdate)="handleUpdate($event)"
+      (delete)="handleDelete($event)"
+    />
+  </li>
+  }
+</ul>
