@@ -11,7 +11,7 @@ h1:hover {
   cursor:pointer
 }
 
-div {
+#main {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -21,10 +21,9 @@ div {
 
 main {
   height: 100%;
-  display: flex;
-  justify-content: center;
+  display: inline;
   align-items: center;
-  padding: 1rem;
+  padding: .8rem;
   box-sizing: inherit;
 }
 
@@ -39,17 +38,23 @@ nav {
   background-color: #00a8e8;
 }
 
-a {
-  padding: 10% 50%;
+
+.link:hover {
+  background-color: #00669c;
+  cursor:pointer;
+}
+
+.link {
+  /* width: 100%;
+  height: 100%; */
+  padding: 1vh;
+  display: block;
   background-color: #0077b6;
+  border-radius: 5px;
   color: white;
   text-decoration: none;
   font-weight: bold;
-  border-radius: 5px;
-}
 
-a:hover {
-  background-color: #00669c;
 }
 
 menu {
@@ -68,5 +73,3 @@ footer {
   text-align: center;
   padding: 0
 }
-
-

@@ -1,30 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { ItemComponent } from './item/item.component';
 import Investimento from '../../models/investimento.model';
-
-const LISTA_INVESTIMENTO: Investimento[] = [
-    {
-        id: 1,
-        nome: 'Investimento Tigre',
-        tipo: 'ACAO',
-        valor: 5000,
-        data: '2025-02-17',
-    },
-    {
-        id: 2,
-        nome: 'Forutune Tiger',
-        tipo: 'ACAO',
-        valor: 5000,
-        data: '2025-02-17',
-    },
-    {
-        id: 3,
-        nome: 'Dogs',
-        tipo: 'ACAO',
-        valor: 5000,
-        data: '2025-02-17',
-    },
-];
+import { InvestimentoService } from '../../services/investimento.service';
+import { Page } from '../../models/page.model';
+import { ErrorResponse } from '../../models/error-response.model';
+import { hasNoEmptyFields } from '../../services/investimento-validator.service';
 
 @Component({
     selector: 'list-app',
@@ -32,28 +12,40 @@ const LISTA_INVESTIMENTO: Investimento[] = [
     templateUrl: './list-app.component.html',
     styleUrl: './list-app.component.css',
 })
-export class ListAppComponent {
-    listaInvestimento: Investimento[] = LISTA_INVESTIMENTO;
+export class ListAppComponent implements OnInit {
     isUpdating = signal(false);
+    pageNumber = 0;
+    listaInvestimento?: Investimento[];
+    page?: Page<Investimento>;
 
-    handleUpdate(update: Investimento) {
+    constructor(private investimentoService: InvestimentoService) {}
 
-        console.log(update.nome);
-        // TODO - logica atualizar
-        const investimento  = this.listaInvestimento.find(i => i.id === update.id);
-        investimento!.nome = update.nome;
-        investimento!.tipo = update.tipo;
-        investimento!.data = update.data;
-        investimento!.valor = update.valor;
-        console.log(investimento!.nome);
-
-
-        this.isUpdating.set(false);
+    ngOnInit() {
+        this.refreshData();
     }
 
-    handleDelete(id:number) {
-        // TODO - logica delete
-        console.log(id);
+    handleUpdate(update: Investimento) {
+        if (hasNoEmptyFields(update)) {
+            this.investimentoService.put(update.id, update).subscribe({
+                complete: () => {
+                    this.refreshData();
+                },
+                error: (error: ErrorResponse) => {
+
+                }
+            });
+            this.isUpdating.set(false);
+        } else {
+            // TODO - tratar logica de campos vazios
+        }
+    }
+
+    handleDelete(id: number) {
+        this.investimentoService.delete(id).subscribe({
+            complete: () => {
+                this.refreshData();
+            },
+        });
     }
 
     startUpdate() {
@@ -63,4 +55,32 @@ export class ListAppComponent {
     cancelUpdateEvent() {
         this.isUpdating.set(false);
     }
+
+    // TODO - corrigir quando se elimina todos os elementos da lista - diminuir automaticamente uma pagina
+    onPreviousPage() {
+        this.pageNumber--;
+        this.refreshData();
+    }
+
+    onNextPage() {
+        this.pageNumber++;
+        this.refreshData();
+    }
+
+    private refreshData() {
+        this.investimentoService.getList({page: this.pageNumber}).subscribe((res) => {
+            this.page = {
+                totalPages: res.totalPages,
+                totalElements: res.totalElements,
+                content: res.content,
+            } as Page<Investimento>;
+            this.listaInvestimento = this.page.content;
+            if (this.listaInvestimento.length === 0 && this.pageNumber > 0) {
+                this.pageNumber--;
+                this.refreshData();
+            }
+        });
+    }
+
+
 }

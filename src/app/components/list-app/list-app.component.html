@@ -1,14 +1,32 @@
-<ul>
-  @for (i of listaInvestimento; track i.id) {
-  <li>
-    <item-app
-      [investimento]="i"
-      [alreadyUpdating]="isUpdating()"
-      (startUpdate)="startUpdate()"
-      (cancelUpdate)="cancelUpdateEvent()"
-      (handleUpdate)="handleUpdate($event)"
-      (delete)="handleDelete($event)"
-    />
-  </li>
-  }
-</ul>
+<div id="container">
+  <h2>Lista de investimentos</h2>
+  <ul>
+    <li id="header">
+      <span>Nome</span><span>Tipo</span><span>Valor</span><span>Data</span><span id="hidden-item">-----</span>
+    </li>
+    @for (i of listaInvestimento; track i.id) {
+    <li>
+      <item-app
+        [investimento]="i"
+        [alreadyUpdating]="isUpdating()"
+        (startUpdate)="startUpdate()"
+        (cancelUpdate)="cancelUpdateEvent()"
+        (handleUpdate)="handleUpdate($event)"
+        (delete)="handleDelete($event)"
+      />
+    </li>
+    }
+  </ul>
+  <div id="page-control">
+    <div>
+      @if (pageNumber !== 0) {
+      <button type="button" (mousedown)="onPreviousPage()">Anterior</button>
+      }
+    </div>
+    <div>
+      @if (page && pageNumber < page.totalPages - 1) {
+      <button type="button" (mousedown)="onNextPage()">Proximo</button>
+      }
+    </div>
+  </div>
+</div>

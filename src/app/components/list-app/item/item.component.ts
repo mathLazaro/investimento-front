@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
     selector: 'item-app',
     imports: [FormsModule],
     templateUrl: './item.component.html',
-    styleUrl: './item.component.css',
+    styleUrls: ['../list-app.component.css', './item.component.css']
 })
 export class ItemComponent {
     @Input({ required: true }) investimento!: Investimento;
